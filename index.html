@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Task Tracker</title>
+  <title>Daily Task Tracker Pro</title>
   <style>
     * {
       margin: 0;
@@ -17,66 +17,35 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
       background: linear-gradient(135deg, #f0f4f8 0%, #e8eef5 100%);
       color: #1f2937;
       line-height: 1.6;
       overflow-x: hidden;
     }
 
-    /* Animations */
     @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes slideOut {
-      from {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      to {
-        opacity: 0;
-        transform: translateY(-12px);
-      }
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-12px); }
     }
 
-    @keyframes progressFill {
-      from {
-        width: 0%;
-      }
-    }
+    @keyframes progressFill { from { width: 0%; } }
 
     @keyframes celebrate {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.08);
-      }
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
     }
 
     @keyframes confettiFall {
-      to {
-        transform: translateY(100vh) rotateZ(360deg);
-        opacity: 0;
-      }
+      to { transform: translateY(100vh) rotateZ(360deg); opacity: 0; }
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     /* Header */
     .header {
@@ -89,7 +58,7 @@
     }
 
     .header-content {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 24px 16px;
     }
@@ -129,11 +98,41 @@
       }
     }
 
-    /* Main Container */
+    /* Container */
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 32px 16px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      color: #6b7280;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease;
+      position: relative;
+      bottom: -2px;
+    }
+
+    .tab-btn.active {
+      color: #2563eb;
+      border-bottom-color: #2563eb;
+    }
+
+    .tab-btn:hover {
+      color: #374151;
     }
 
     /* Celebration Banner */
@@ -147,23 +146,9 @@
       text-align: center;
     }
 
-    .celebration-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-      display: block;
-    }
-
-    .celebration h2 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #16a34a;
-      margin-bottom: 8px;
-    }
-
-    .celebration p {
-      font-size: 14px;
-      color: #22c55e;
-    }
+    .celebration-icon { font-size: 48px; margin-bottom: 12px; display: block; }
+    .celebration h2 { font-size: 20px; font-weight: 700; color: #16a34a; margin-bottom: 8px; }
+    .celebration p { font-size: 14px; color: #22c55e; }
 
     /* Stats Grid */
     .stats {
@@ -171,7 +156,6 @@
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 16px;
       margin-bottom: 32px;
-      animation: fadeIn 0.6s ease-out;
     }
 
     .stat-card {
@@ -194,17 +178,10 @@
       margin-bottom: 8px;
     }
 
-    .stat-value.total {
-      color: #1f2937;
-    }
-
-    .stat-value.progress {
-      color: #f59e0b;
-    }
-
-    .stat-value.done {
-      color: #10b981;
-    }
+    .stat-value.total { color: #1f2937; }
+    .stat-value.progress { color: #f59e0b; }
+    .stat-value.hold { color: #8b5cf6; }
+    .stat-value.done { color: #10b981; }
 
     .stat-label {
       font-size: 12px;
@@ -258,7 +235,6 @@
       background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
       border-radius: 9999px;
       transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-      animation: progressFill 1s ease-out;
     }
 
     .progress-text {
@@ -274,7 +250,6 @@
       border: 1px solid #e5e7eb;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
       margin-bottom: 32px;
-      animation: slideIn 0.5s ease-out;
     }
 
     .input-wrapper {
@@ -304,7 +279,6 @@
       outline: none;
       border-color: #2563eb;
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-      background: white;
     }
 
     .task-input::placeholder {
@@ -330,16 +304,11 @@
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
 
-    .add-btn:active {
-      transform: translateY(0);
-    }
-
     /* Task List */
     .task-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      animation: fadeIn 0.5s ease-out;
     }
 
     .empty-state {
@@ -350,21 +319,37 @@
       border: 2px dashed #e5e7eb;
     }
 
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-text { font-size: 16px; font-weight: 500; color: #9ca3af; }
+
+    /* Day Group */
+    .day-group {
+      margin-bottom: 32px;
+      animation: slideIn 0.3s ease-out;
     }
 
-    .empty-text {
-      font-size: 16px;
-      font-weight: 500;
-      color: #9ca3af;
+    .day-header {
+      padding: 12px 16px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #374151;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .day-header.completed {
+      background: linear-gradient(135deg, #dcfce7 0%, #ccfbf1 100%);
+      color: #16a34a;
+      border: 1px solid #86efac;
     }
 
     /* Task Item */
     .task-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 12px;
       padding: 16px;
       background: white;
@@ -372,6 +357,7 @@
       border: 1px solid #e5e7eb;
       transition: all 0.2s ease;
       animation: slideIn 0.3s ease-out;
+      flex-wrap: wrap;
     }
 
     .task-item:hover {
@@ -389,6 +375,11 @@
       color: #9ca3af;
     }
 
+    .task-item.hold .task-text {
+      color: #8b5cf6;
+      font-style: italic;
+    }
+
     /* Status Button */
     .status-btn {
       flex-shrink: 0;
@@ -402,40 +393,33 @@
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
+      margin-top: 2px;
     }
 
-    .status-btn.todo {
-      border-color: #d1d5db;
-    }
+    .status-btn.todo { border-color: #d1d5db; }
+    .status-btn.progress { border-color: #f59e0b; background: #fef3c7; }
+    .status-btn.hold { border-color: #8b5cf6; background: #ede9fe; }
+    .status-btn.done { border-color: #10b981; background: #10b981; color: white; }
 
-    .status-btn.progress {
-      border-color: #f59e0b;
-      background: #fef3c7;
-    }
-
-    .status-btn.done {
-      border-color: #10b981;
-      background: #10b981;
-      color: white;
-    }
-
-    .status-btn:hover {
-      transform: scale(1.1);
-    }
-
-    .status-btn:active {
-      transform: scale(0.95);
-    }
+    .status-btn:hover { transform: scale(1.1); }
+    .status-btn:active { transform: scale(0.95); }
 
     /* Task Content */
     .task-content {
       flex: 1;
-      min-width: 0;
+      min-width: 200px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .task-text {
@@ -444,12 +428,11 @@
       word-break: break-word;
       cursor: pointer;
       transition: color 0.2s ease;
-      padding: 4px 0;
+      flex: 1;
+      min-width: 100px;
     }
 
-    .task-text:hover {
-      color: #2563eb;
-    }
+    .task-text:hover { color: #2563eb; }
 
     .task-input-edit {
       padding: 8px 12px;
@@ -466,6 +449,20 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
+    .task-meta {
+      font-size: 12px;
+      color: #9ca3af;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .task-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     .task-status {
       display: inline-block;
       font-size: 11px;
@@ -474,37 +471,25 @@
       border-radius: 9999px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      transition: all 0.2s ease;
     }
 
-    .task-status.todo {
-      background: #f3f4f6;
-      color: #6b7280;
-    }
-
-    .task-status.progress {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .task-status.done {
-      background: #dcfce7;
-      color: #166534;
-    }
+    .task-status.todo { background: #f3f4f6; color: #6b7280; }
+    .task-status.progress { background: #fef3c7; color: #92400e; }
+    .task-status.hold { background: #f3e8ff; color: #6b21a8; }
+    .task-status.done { background: #dcfce7; color: #166534; }
 
     /* Task Actions */
     .task-actions {
       flex-shrink: 0;
       display: flex;
-      gap: 8px;
+      gap: 4px;
       align-items: center;
     }
 
-    .delete-btn {
+    .action-btn {
       padding: 8px;
       background: transparent;
       border: none;
-      color: #ef4444;
       cursor: pointer;
       border-radius: 6px;
       display: flex;
@@ -513,6 +498,26 @@
       transition: all 0.2s ease;
       width: 32px;
       height: 32px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .hold-btn {
+      color: #8b5cf6;
+    }
+
+    .hold-btn:hover {
+      background: #f3e8ff;
+      color: #6b21a8;
+    }
+
+    .hold-btn.active {
+      background: #8b5cf6;
+      color: white;
+    }
+
+    .delete-btn {
+      color: #ef4444;
     }
 
     .delete-btn:hover {
@@ -520,21 +525,20 @@
       color: #dc2626;
     }
 
-    .delete-btn:active {
-      transform: scale(0.9);
-    }
-
-    .delete-btn svg {
+    .action-btn svg {
       width: 18px;
       height: 18px;
     }
 
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding: 32px 16px;
-      color: #9ca3af;
-      font-size: 13px;
+    /* Time Display */
+    .time-tracking {
+      font-size: 12px;
+      color: #059669;
+      font-weight: 600;
+      padding: 4px 8px;
+      background: #ecfdf5;
+      border-radius: 4px;
+      display: inline-block;
     }
 
     /* Confetti */
@@ -548,41 +552,23 @@
       animation: confettiFall 2.5s ease-in forwards;
     }
 
-    /* Responsive */
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 32px 16px;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
     @media (max-width: 640px) {
-      .header-content {
-        padding: 16px;
-      }
-
-      .header h1 {
-        font-size: 24px;
-      }
-
-      .container {
-        padding: 16px;
-      }
-
-      .stats {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-      }
-
-      .stat-card {
-        padding: 16px;
-      }
-
-      .stat-value {
-        font-size: 24px;
-      }
-
-      .task-item {
-        padding: 12px;
-        flex-wrap: wrap;
-      }
-
-      .task-content {
-        width: 100%;
-      }
+      .header-content { padding: 16px; }
+      .header h1 { font-size: 24px; }
+      .container { padding: 16px; }
+      .stats { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .stat-card { padding: 16px; }
+      .stat-value { font-size: 24px; }
+      .task-item { padding: 12px; }
+      .task-content { width: 100%; }
     }
   </style>
 </head>
@@ -591,7 +577,7 @@
 <!-- Header -->
 <div class="header">
   <div class="header-content">
-    <h1>Daily Task Tracker</h1>
+    <h1>Daily Task Tracker Pro</h1>
     <div class="time-display">
       <div class="date" id="dateDisplay"></div>
       <div class="time" id="timeDisplay"></div>
@@ -608,72 +594,93 @@
     <p>Time to celebrate and rest well. You've earned it!</p>
   </div>
 
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-value total" id="totalCount">0</div>
-      <div class="stat-label">Total Tasks</div>
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="today">Today's Tasks</button>
+    <button class="tab-btn" data-tab="history">Completed Days</button>
+  </div>
+
+  <!-- Today's View -->
+  <div id="today-view">
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value total" id="totalCount">0</div>
+        <div class="stat-label">Total Tasks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value progress" id="progressCount">0</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value hold" id="holdCount">0</div>
+        <div class="stat-label">On Hold</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value done" id="doneCount">0</div>
+        <div class="stat-label">Completed</div>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-value progress" id="progressCount">0</div>
-      <div class="stat-label">In Progress</div>
+
+    <!-- Progress Bar -->
+    <div class="progress-section">
+      <div class="progress-header">
+        <div class="progress-label">Progress</div>
+        <div class="progress-percent"><span id="progressPercent">0</span>%</div>
+      </div>
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+      </div>
+      <div class="progress-text">
+        <span id="progressText">0 of 0 tasks completed</span>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-value done" id="doneCount">0</div>
-      <div class="stat-label">Completed</div>
+
+    <!-- Input Section -->
+    <div class="input-section">
+      <div class="input-wrapper">
+        <input
+          type="text"
+          class="task-input"
+          id="taskInput"
+          placeholder="Add a new task..."
+          autocomplete="off"
+        >
+        <button class="add-btn" id="addBtn">Add Task</button>
+      </div>
+    </div>
+
+    <!-- Task List -->
+    <div class="task-list" id="taskList"></div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">📝</div>
+      <div class="empty-text">No tasks yet. Add one to get started!</div>
     </div>
   </div>
 
-  <!-- Progress Bar -->
-  <div class="progress-section">
-    <div class="progress-header">
-      <div class="progress-label">Progress</div>
-      <div class="progress-percent"><span id="progressPercent">0</span>%</div>
+  <!-- History View -->
+  <div id="history-view" style="display: none;">
+    <div class="task-list" id="historyList"></div>
+    <div class="empty-state" id="emptyHistory">
+      <div class="empty-icon">📚</div>
+      <div class="empty-text">No completed days yet. Complete all tasks to create history!</div>
     </div>
-    <div class="progress-bar-wrapper">
-      <div class="progress-bar" id="progressBar" style="width: 0%"></div>
-    </div>
-    <div class="progress-text">
-      <span id="progressText">0 of 0 tasks completed</span>
-    </div>
-  </div>
-
-  <!-- Input Section -->
-  <div class="input-section">
-    <div class="input-wrapper">
-      <input
-        type="text"
-        class="task-input"
-        id="taskInput"
-        placeholder="Add a new task..."
-        autocomplete="off"
-      >
-      <button class="add-btn" id="addBtn">Add Task</button>
-    </div>
-  </div>
-
-  <!-- Task List -->
-  <div class="task-list" id="taskList"></div>
-
-  <!-- Empty State -->
-  <div class="empty-state" id="emptyState">
-    <div class="empty-icon">📝</div>
-    <div class="empty-text">No tasks yet. Add one to get started!</div>
   </div>
 
   <!-- Footer -->
   <div class="footer">
-    Tasks are automatically saved to your device.
+    Tasks are automatically saved to your device. Click a task to edit it.
   </div>
 </div>
 
 <script>
-  // =============================================
-  // STATE MANAGEMENT
-  // =============================================
   class TaskManager {
     constructor() {
       this.tasks = this.loadFromStorage();
+      this.history = this.loadHistoryFromStorage();
+      this.currentTab = 'today';
       this.init();
     }
 
@@ -682,6 +689,7 @@
       this.updateDateTime();
       this.render();
       setInterval(() => this.updateDateTime(), 1000);
+      setInterval(() => this.updateTimeTracking(), 1000);
     }
 
     setupEventListeners() {
@@ -692,9 +700,17 @@
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') this.addTask();
       });
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          this.currentTab = e.target.dataset.tab;
+          this.renderView();
+        });
+      });
     }
 
-    // CRUD Operations
     addTask() {
       const input = document.getElementById('taskInput');
       const text = input.value.trim();
@@ -705,7 +721,10 @@
         id: Date.now(),
         text,
         status: 'todo',
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        startedAt: null,
+        completedAt: null,
+        holdCount: 0
       };
 
       this.tasks.push(task);
@@ -735,12 +754,48 @@
       if (!task) return;
 
       const cycle = { todo: 'progress', progress: 'done', done: 'todo' };
-      task.status = cycle[task.status];
+      const newStatus = cycle[task.status];
+
+      if (newStatus === 'progress' && !task.startedAt) {
+        task.startedAt = new Date().toISOString();
+      }
+
+      if (newStatus === 'done') {
+        task.completedAt = new Date().toISOString();
+      }
+
+      task.status = newStatus;
+      this.checkDayCompleted();
       this.save();
       this.render();
     }
 
-    // Date & Time
+    toggleHold(id) {
+      const task = this.tasks.find(t => t.id === id);
+      if (!task) return;
+
+      if (task.status === 'hold') {
+        task.status = 'progress';
+        if (!task.startedAt) task.startedAt = new Date().toISOString();
+      } else if (task.status === 'progress') {
+        task.status = 'hold';
+      }
+      this.save();
+      this.render();
+    }
+
+    checkDayCompleted() {
+      if (this.tasks.length > 0 && this.tasks.every(t => t.status === 'done')) {
+        const today = new Date().toLocaleDateString('en-US');
+        this.history.push({
+          date: today,
+          tasks: JSON.parse(JSON.stringify(this.tasks)),
+          completedAt: new Date().toISOString()
+        });
+        this.saveHistory();
+      }
+    }
+
     updateDateTime() {
       const now = new Date();
 
@@ -762,9 +817,45 @@
       document.getElementById('timeDisplay').textContent = timeString;
     }
 
-    // Storage
+    updateTimeTracking() {
+      this.tasks.forEach(task => {
+        const elem = document.querySelector(`[data-task-id="${task.id}"] .time-tracking`);
+        if (elem && task.status === 'progress' && task.startedAt) {
+          const duration = this.getTimeDuration(new Date(task.startedAt), new Date());
+          elem.textContent = `⏱️ ${duration}`;
+        }
+      });
+    }
+
+    getTimeDuration(start, end) {
+      const diffMs = end - start;
+      const diffMins = Math.floor(diffMs / 60000);
+      const hours = Math.floor(diffMins / 60);
+      const mins = diffMins % 60;
+
+      if (hours > 0) {
+        return `${hours}h ${mins}m`;
+      }
+      return `${mins}m`;
+    }
+
+    formatTaskDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
     loadFromStorage() {
       const stored = localStorage.getItem('tasks');
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    loadHistoryFromStorage() {
+      const stored = localStorage.getItem('task-history');
       return stored ? JSON.parse(stored) : [];
     }
 
@@ -772,21 +863,38 @@
       localStorage.setItem('tasks', JSON.stringify(this.tasks));
     }
 
-    // Rendering
+    saveHistory() {
+      localStorage.setItem('task-history', JSON.stringify(this.history));
+    }
+
     render() {
-      this.updateStats();
-      this.renderTasks();
-      this.checkCelebration();
+      this.renderView();
+    }
+
+    renderView() {
+      if (this.currentTab === 'today') {
+        document.getElementById('today-view').style.display = 'block';
+        document.getElementById('history-view').style.display = 'none';
+        this.updateStats();
+        this.renderTasks();
+        this.checkCelebration();
+      } else {
+        document.getElementById('today-view').style.display = 'none';
+        document.getElementById('history-view').style.display = 'block';
+        this.renderHistory();
+      }
     }
 
     updateStats() {
       const total = this.tasks.length;
       const inProgress = this.tasks.filter(t => t.status === 'progress').length;
+      const onHold = this.tasks.filter(t => t.status === 'hold').length;
       const done = this.tasks.filter(t => t.status === 'done').length;
       const percent = total === 0 ? 0 : Math.round((done / total) * 100);
 
       document.getElementById('totalCount').textContent = total;
       document.getElementById('progressCount').textContent = inProgress;
+      document.getElementById('holdCount').textContent = onHold;
       document.getElementById('doneCount').textContent = done;
       document.getElementById('progressPercent').textContent = percent;
       document.getElementById('progressBar').style.width = `${percent}%`;
@@ -806,7 +914,6 @@
       empty.style.display = 'none';
       list.innerHTML = this.tasks.map(task => this.createTaskElement(task)).join('');
 
-      // Add event listeners
       this.tasks.forEach(task => {
         const element = document.querySelector(`[data-task-id="${task.id}"]`);
         if (!element) return;
@@ -815,9 +922,15 @@
           this.cycleStatus(task.id);
         });
 
-        element.querySelector('.delete-btn').addEventListener('click', () => {
-          this.deleteTask(task.id);
-        });
+        const deleteBtn = element.querySelector('.delete-btn');
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', () => this.deleteTask(task.id));
+        }
+
+        const holdBtn = element.querySelector('.hold-btn');
+        if (holdBtn) {
+          holdBtn.addEventListener('click', () => this.toggleHold(task.id));
+        }
 
         element.querySelector('.task-text').addEventListener('click', () => {
           this.startEdit(task.id);
@@ -827,19 +940,30 @@
 
     createTaskElement(task) {
       const statusClass = task.status;
-      const statusLabel = task.status === 'todo' ? 'To Do' : task.status === 'progress' ? 'In Progress' : 'Done';
+      const statusLabel = task.status === 'todo' ? 'To Do' : task.status === 'progress' ? 'In Progress' : task.status === 'hold' ? 'On Hold' : 'Done';
+      const createdDate = this.formatTaskDate(task.createdAt);
+      const durationHtml = task.status === 'progress' && task.startedAt 
+        ? `<span class="time-tracking">⏱️ ${this.getTimeDuration(new Date(task.startedAt), new Date())}</span>`
+        : '';
 
       return `
-        <div class="task-item ${task.status === 'done' ? 'done' : ''}" data-task-id="${task.id}">
+        <div class="task-item ${statusClass}" data-task-id="${task.id}">
           <button class="status-btn ${statusClass}" title="Click to cycle status">
             ${task.status === 'done' ? '✓' : ''}
           </button>
-          <div class="task-content">
-            <div class="task-text">${this.escapeHtml(task.text)}</div>
+          <div class="task-content" style="width: 100%; flex: 1;">
+            <div class="task-header">
+              <div class="task-text">${this.escapeHtml(task.text)}</div>
+            </div>
+            <div class="task-meta">
+              <span class="task-meta-item">📅 Created: ${createdDate}</span>
+              ${durationHtml}
+            </div>
             <div class="task-status ${statusClass}">${statusLabel}</div>
           </div>
           <div class="task-actions">
-            <button class="delete-btn" title="Delete task">
+            ${task.status !== 'done' ? `<button class="action-btn hold-btn ${task.status === 'hold' ? 'active' : ''}" title="Hold/Resume">⏸️</button>` : ''}
+            <button class="action-btn delete-btn" title="Delete task">
               <svg fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
               </svg>
@@ -847,6 +971,39 @@
           </div>
         </div>
       `;
+    }
+
+    renderHistory() {
+      const list = document.getElementById('historyList');
+      const empty = document.getElementById('emptyHistory');
+
+      if (this.history.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+
+      list.innerHTML = this.history.map(day => `
+        <div class="day-group">
+          <div class="day-header completed">✓ ${day.date} - ${day.tasks.length} tasks completed</div>
+          ${day.tasks.map(task => `
+            <div class="task-item done" style="opacity: 0.8;">
+              <button class="status-btn done" disabled>✓</button>
+              <div class="task-content" style="width: 100%;">
+                <div class="task-header">
+                  <div class="task-text" style="text-decoration: line-through;">${this.escapeHtml(task.text)}</div>
+                </div>
+                <div class="task-meta">
+                  <span class="task-meta-item">📅 ${this.formatTaskDate(task.createdAt)}</span>
+                  ${task.startedAt && task.completedAt ? `<span class="task-meta-item">⏱️ ${this.getTimeDuration(new Date(task.startedAt), new Date(task.completedAt))}</span>` : ''}
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
     }
 
     startEdit(id) {
