@@ -577,7 +577,7 @@
 <!-- Header -->
 <div class="header">
   <div class="header-content">
-    <h1>Maneesha Daily Task Tracker Pro</h1>
+    <h1>Daily Task Tracker Pro</h1>
     <div class="time-display">
       <div class="date" id="dateDisplay"></div>
       <div class="time" id="timeDisplay"></div>
@@ -724,7 +724,8 @@
         createdAt: new Date().toISOString(),
         startedAt: null,
         completedAt: null,
-        holdCount: 0
+        holdStartedAt: null,
+        totalHoldTime: 0
       };
 
       this.tasks.push(task);
@@ -775,10 +776,18 @@
       if (!task) return;
 
       if (task.status === 'hold') {
+        // Resuming from hold - add the hold duration to totalHoldTime
+        if (task.holdStartedAt) {
+          const holdDuration = new Date() - new Date(task.holdStartedAt);
+          task.totalHoldTime += holdDuration;
+          task.holdStartedAt = null;
+        }
         task.status = 'progress';
         if (!task.startedAt) task.startedAt = new Date().toISOString();
       } else if (task.status === 'progress') {
+        // Moving to hold - record when it was put on hold
         task.status = 'hold';
+        task.holdStartedAt = new Date().toISOString();
       }
       this.save();
       this.render();
@@ -821,13 +830,37 @@
       this.tasks.forEach(task => {
         const elem = document.querySelector(`[data-task-id="${task.id}"] .time-tracking`);
         if (elem && task.status === 'progress' && task.startedAt) {
-          const duration = this.getTimeDuration(new Date(task.startedAt), new Date());
+          const duration = this.getTimeDuration(task);
           elem.textContent = `⏱️ ${duration}`;
         }
       });
     }
 
-    getTimeDuration(start, end) {
+    getTimeDuration(task) {
+      if (!task.startedAt) return '0m';
+
+      const start = new Date(task.startedAt);
+      const end = task.completedAt ? new Date(task.completedAt) : new Date();
+      
+      let diffMs = end - start;
+      // Subtract the time spent on hold
+      diffMs -= task.totalHoldTime || 0;
+      // If currently on hold, subtract time since it was put on hold
+      if (task.status === 'hold' && task.holdStartedAt) {
+        diffMs -= (new Date() - new Date(task.holdStartedAt));
+      }
+
+      const diffMins = Math.floor(diffMs / 60000);
+      const hours = Math.floor(diffMins / 60);
+      const mins = diffMins % 60;
+
+      if (hours > 0) {
+        return `${hours}h ${mins}m`;
+      }
+      return `${mins}m`;
+    }
+
+    getTimeDurationLegacy(start, end) {
       const diffMs = end - start;
       const diffMins = Math.floor(diffMs / 60000);
       const hours = Math.floor(diffMins / 60);
@@ -942,8 +975,8 @@
       const statusClass = task.status;
       const statusLabel = task.status === 'todo' ? 'To Do' : task.status === 'progress' ? 'In Progress' : task.status === 'hold' ? 'On Hold' : 'Done';
       const createdDate = this.formatTaskDate(task.createdAt);
-      const durationHtml = task.status === 'progress' && task.startedAt 
-        ? `<span class="time-tracking">⏱️ ${this.getTimeDuration(new Date(task.startedAt), new Date())}</span>`
+      const durationHtml = (task.status === 'progress' || task.status === 'hold') && task.startedAt 
+        ? `<span class="time-tracking">⏱️ ${this.getTimeDuration(task)}</span>`
         : '';
 
       return `
@@ -997,7 +1030,7 @@
                 </div>
                 <div class="task-meta">
                   <span class="task-meta-item">📅 ${this.formatTaskDate(task.createdAt)}</span>
-                  ${task.startedAt && task.completedAt ? `<span class="task-meta-item">⏱️ ${this.getTimeDuration(new Date(task.startedAt), new Date(task.completedAt))}</span>` : ''}
+                  ${task.startedAt && task.completedAt ? `<span class="task-meta-item">⏱️ ${this.getTimeDurationLegacy(new Date(task.startedAt), new Date(task.completedAt))} active</span>` : ''}
                 </div>
               </div>
             </div>
