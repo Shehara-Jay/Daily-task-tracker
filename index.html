@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Task Tracker Pro</title>
+  <title>Maneesha's Daily Task Tracker</title>
   <style>
     * {
       margin: 0;
@@ -592,12 +592,21 @@
     /* Time Display */
     .time-tracking {
       font-size: 12px;
-      color: #059669;
       font-weight: 600;
       padding: 4px 8px;
-      background: #ecfdf5;
       border-radius: 4px;
       display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .task-item.progress .time-tracking {
+      color: #059669;
+      background: #ecfdf5;
+    }
+
+    .task-item.hold .time-tracking {
+      color: #7c3aed;
+      background: #f3e8ff;
     }
 
     .carried-over-badge {
@@ -664,7 +673,7 @@
 <!-- Header -->
 <div class="header">
   <div class="header-content">
-    <h1>Maneesha Task Tracker</h1>
+    <h1>Daily Task Tracker Pro</h1>
     <div class="time-display">
       <div class="date" id="dateDisplay"></div>
       <div class="time" id="timeDisplay"></div>
@@ -1010,9 +1019,20 @@
     updateTimeTracking() {
       this.tasks.forEach(task => {
         const elem = document.querySelector(`[data-task-id="${task.id}"] .time-tracking`);
-        if (elem && task.status === 'progress' && task.startedAt) {
+        if (elem && task.startedAt) {
           const duration = this.getTimeDuration(task);
-          elem.textContent = `⏱️ ${duration}`;
+          
+          if (task.status === 'progress') {
+            // Show active time tracking
+            elem.textContent = `⏱️ ${duration}`;
+            elem.style.background = '#ecfdf5';
+            elem.style.color = '#059669';
+          } else if (task.status === 'hold') {
+            // Show paused time tracking
+            elem.textContent = `⏸️ ${duration} (paused)`;
+            elem.style.background = '#f3e8ff';
+            elem.style.color = '#7c3aed';
+          }
         }
       });
     }
@@ -1196,11 +1216,27 @@
           dropdown.addEventListener('change', (e) => {
             const newStatus = e.target.value;
             const taskToUpdate = this.tasks.find(t => t.id === task.id);
+            const oldStatus = taskToUpdate.status;
             
-            if (newStatus === 'progress' && !taskToUpdate.startedAt) {
-              taskToUpdate.startedAt = new Date().toISOString();
+            // Handle transition to Progress
+            if (newStatus === 'progress') {
+              if (!taskToUpdate.startedAt) {
+                taskToUpdate.startedAt = new Date().toISOString();
+              }
+              // If coming from hold, record the hold time
+              if (oldStatus === 'hold' && taskToUpdate.holdStartedAt) {
+                const holdDuration = new Date() - new Date(taskToUpdate.holdStartedAt);
+                taskToUpdate.totalHoldTime += holdDuration;
+                taskToUpdate.holdStartedAt = null;
+              }
             }
             
+            // Handle transition to Hold
+            if (newStatus === 'hold') {
+              taskToUpdate.holdStartedAt = new Date().toISOString();
+            }
+            
+            // Handle transition to Done
             if (newStatus === 'done') {
               taskToUpdate.completedAt = new Date().toISOString();
             }
