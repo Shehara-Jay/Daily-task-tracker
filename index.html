@@ -414,31 +414,56 @@
       font-style: italic;
     }
 
-    /* Status Button */
-    .status-btn {
+    /* Status Dropdown */
+    .status-dropdown {
       flex-shrink: 0;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 2px solid;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
       background: white;
+      color: #1f2937;
+      font-size: 13px;
+      font-weight: 500;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      font-size: 14px;
-      font-weight: 700;
-      margin-top: 2px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      min-width: 110px;
     }
 
-    .status-btn.todo { border-color: #d1d5db; }
-    .status-btn.progress { border-color: #f59e0b; background: #fef3c7; }
-    .status-btn.hold { border-color: #8b5cf6; background: #ede9fe; }
-    .status-btn.done { border-color: #10b981; background: #10b981; color: white; }
+    .status-dropdown:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
 
-    .status-btn:hover { transform: scale(1.1); }
-    .status-btn:active { transform: scale(0.95); }
+    .status-dropdown:hover {
+      border-color: #9ca3af;
+      background: #f9fafb;
+    }
+
+    .task-item.todo .status-dropdown {
+      border-color: #d1d5db;
+      background: #f9fafb;
+      color: #6b7280;
+    }
+
+    .task-item.progress .status-dropdown {
+      border-color: #f59e0b;
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .task-item.hold .status-dropdown {
+      border-color: #8b5cf6;
+      background: #f3e8ff;
+      color: #6b21a8;
+    }
+
+    .task-item.done .status-dropdown {
+      border-color: #10b981;
+      background: #ecfdf5;
+      color: #065f46;
+    }
 
     /* Task Content */
     .task-content {
@@ -611,8 +636,20 @@
       .stats { grid-template-columns: repeat(3, 1fr); gap: 12px; }
       .stat-card { padding: 16px; }
       .stat-value { font-size: 24px; }
-      .task-item { padding: 12px; }
+      .task-item { 
+        padding: 12px; 
+        flex-direction: column;
+        gap: 12px;
+      }
       .task-content { width: 100%; }
+      .status-dropdown {
+        width: 100%;
+        min-width: auto;
+      }
+      .task-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
       .input-wrapper {
         flex-direction: column;
       }
@@ -627,7 +664,7 @@
 <!-- Header -->
 <div class="header">
   <div class="header-content">
-    <h1>Maneesha Daily Task Tracker</h1>
+    <h1>Maneesha Task Tracker</h1>
     <div class="time-display">
       <div class="date" id="dateDisplay"></div>
       <div class="time" id="timeDisplay"></div>
@@ -1148,24 +1185,40 @@
       
       list.innerHTML = html;
 
+      // Add event listeners for dropdown and delete buttons
       todaysTasks.forEach(task => {
         const element = document.querySelector(`[data-task-id="${task.id}"]`);
         if (!element) return;
 
-        element.querySelector('.status-btn').addEventListener('click', () => {
-          this.cycleStatus(task.id);
-        });
+        // Status dropdown change handler
+        const dropdown = element.querySelector('.status-dropdown');
+        if (dropdown) {
+          dropdown.addEventListener('change', (e) => {
+            const newStatus = e.target.value;
+            const taskToUpdate = this.tasks.find(t => t.id === task.id);
+            
+            if (newStatus === 'progress' && !taskToUpdate.startedAt) {
+              taskToUpdate.startedAt = new Date().toISOString();
+            }
+            
+            if (newStatus === 'done') {
+              taskToUpdate.completedAt = new Date().toISOString();
+            }
+            
+            taskToUpdate.status = newStatus;
+            this.checkDayCompleted();
+            this.save();
+            this.render();
+          });
+        }
 
+        // Delete button handler
         const deleteBtn = element.querySelector('.delete-btn');
         if (deleteBtn) {
           deleteBtn.addEventListener('click', () => this.deleteTask(task.id));
         }
 
-        const holdBtn = element.querySelector('.hold-btn');
-        if (holdBtn) {
-          holdBtn.addEventListener('click', () => this.toggleHold(task.id));
-        }
-
+        // Task text click to edit
         element.querySelector('.task-text').addEventListener('click', () => {
           this.startEdit(task.id);
         });
@@ -1174,7 +1227,6 @@
 
     createTaskElement(task) {
       const statusClass = task.status;
-      const statusLabel = task.status === 'todo' ? 'To Do' : task.status === 'progress' ? 'In Progress' : task.status === 'hold' ? 'On Hold' : 'Done';
       const createdDate = this.formatTaskDate(task.createdAt);
       const durationHtml = (task.status === 'progress' || task.status === 'hold') && task.startedAt 
         ? `<span class="time-tracking">⏱️ ${this.getTimeDuration(task)}</span>`
@@ -1185,9 +1237,12 @@
 
       return `
         <div class="task-item ${statusClass}" data-task-id="${task.id}">
-          <button class="status-btn ${statusClass}" title="Click to cycle status">
-            ${task.status === 'done' ? '✓' : ''}
-          </button>
+          <select class="status-dropdown" data-task-id="${task.id}" title="Change task status">
+            <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>To Do</option>
+            <option value="progress" ${task.status === 'progress' ? 'selected' : ''}>In Progress</option>
+            <option value="hold" ${task.status === 'hold' ? 'selected' : ''}>On Hold</option>
+            <option value="done" ${task.status === 'done' ? 'selected' : ''}>Done ✓</option>
+          </select>
           <div class="task-content" style="width: 100%; flex: 1;">
             <div class="task-header">
               <div class="task-text">${this.escapeHtml(task.text)}</div>
@@ -1197,10 +1252,9 @@
               ${carriedOverHtml}
               ${durationHtml}
             </div>
-            <div class="task-status ${statusClass}">${statusLabel}</div>
+            <div class="task-status ${statusClass}">${task.status === 'todo' ? 'To Do' : task.status === 'progress' ? 'In Progress' : task.status === 'hold' ? 'On Hold' : 'Done'}</div>
           </div>
           <div class="task-actions">
-            ${task.status !== 'done' ? `<button class="action-btn hold-btn ${task.status === 'hold' ? 'active' : ''}" title="Hold/Resume">⏸️</button>` : ''}
             <button class="action-btn delete-btn" title="Delete task">
               <svg fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
